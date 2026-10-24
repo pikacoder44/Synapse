@@ -169,7 +169,7 @@ export function HumanBenchmarkLeaderboardPage({
     <div className="min-h-screen bg-neutral-950 text-foreground flex flex-col selection:bg-emerald-500/20 relative overflow-hidden">
       {/* ── Background Ambient Backlights (Deep Cinematic Dark with Neon Emerald) ── */}
       <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-gradient-to-b from-emerald-500/10 via-emerald-600/5 to-transparent blur-3xl pointer-events-none"
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-96 bg-linear-to-b from-emerald-500/10 via-emerald-600/5 to-transparent blur-3xl pointer-events-none"
         aria-hidden="true"
       />
       <div
@@ -289,7 +289,7 @@ export function HumanBenchmarkLeaderboardPage({
                         handleRowClick(rank2);
                       }
                     }}
-                    className="order-2 md:order-1 relative flex flex-col justify-between p-6 rounded-2xl bg-gradient-to-b from-slate-400/10 via-neutral-900/90 to-neutral-950 border border-slate-400/30 shadow-[0_0_20px_rgba(148,163,184,0.1)] hover:shadow-[0_0_30px_rgba(148,163,184,0.2)] hover:border-slate-300/60 transition-all duration-300 cursor-pointer overflow-hidden backdrop-blur-xl group"
+                    className="order-2 md:order-1 relative flex flex-col justify-between p-6 rounded-2xl bg-linear-to-b from-slate-400/10 via-neutral-900/90 to-neutral-950 border border-slate-400/30 shadow-[0_0_20px_rgba(148,163,184,0.1)] hover:shadow-[0_0_30px_rgba(148,163,184,0.2)] hover:border-slate-300/60 transition-all duration-300 cursor-pointer overflow-hidden backdrop-blur-xl group"
                   >
                     {/* Top Badge */}
                     <div className="flex items-center justify-between w-full mb-4 relative z-10">
@@ -370,11 +370,11 @@ export function HumanBenchmarkLeaderboardPage({
                         handleRowClick(rank1);
                       }
                     }}
-                    className="order-1 md:order-2 md:-translate-y-3 relative flex flex-col justify-between p-6 sm:p-7 rounded-2xl bg-gradient-to-b from-amber-500/10 via-neutral-900/90 to-neutral-950 border border-amber-500/40 shadow-[0_0_30px_rgba(245,158,11,0.15)] hover:shadow-[0_0_40px_rgba(245,158,11,0.25)] hover:border-amber-400/70 transition-all duration-300 cursor-pointer overflow-hidden backdrop-blur-xl group"
+                    className="order-1 md:order-2 md:-translate-y-3 relative flex flex-col justify-between p-6 sm:p-7 rounded-2xl bg-linear-to-b from-amber-500/10 via-neutral-900/90 to-neutral-950 border border-amber-500/40 shadow-[0_0_30px_rgba(245,158,11,0.15)] hover:shadow-[0_0_40px_rgba(245,158,11,0.25)] hover:border-amber-400/70 transition-all duration-300 cursor-pointer overflow-hidden backdrop-blur-xl group"
                   >
                     {/* Shimmer sweep effect */}
                     <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-                      <div className="absolute inset-0 w-1/3 bg-gradient-to-r from-transparent via-amber-300/10 to-transparent animate-shimmer-pass pointer-events-none" />
+                      <div className="absolute inset-0 w-1/3 bg-linear-to-r from-transparent via-amber-300/10 to-transparent animate-shimmer-pass pointer-events-none" />
                     </div>
 
                     {/* Top Crown Badge */}
@@ -459,7 +459,7 @@ export function HumanBenchmarkLeaderboardPage({
                         handleRowClick(rank3);
                       }
                     }}
-                    className="order-3 md:order-3 relative flex flex-col justify-between p-6 rounded-2xl bg-gradient-to-b from-amber-700/10 via-neutral-900/90 to-neutral-950 border border-amber-700/30 shadow-[0_0_20px_rgba(180,83,9,0.1)] hover:shadow-[0_0_30px_rgba(180,83,9,0.2)] hover:border-amber-600/60 transition-all duration-300 cursor-pointer overflow-hidden backdrop-blur-xl group"
+                    className="order-3 md:order-3 relative flex flex-col justify-between p-6 rounded-2xl bg-linear-to-b from-amber-700/10 via-neutral-900/90 to-neutral-950 border border-amber-700/30 shadow-[0_0_20px_rgba(180,83,9,0.1)] hover:shadow-[0_0_30px_rgba(180,83,9,0.2)] hover:border-amber-600/60 transition-all duration-300 cursor-pointer overflow-hidden backdrop-blur-xl group"
                   >
                     {/* Top Badge */}
                     <div className="flex items-center justify-between w-full mb-4 relative z-10">
@@ -708,7 +708,7 @@ export function HumanBenchmarkLeaderboardPage({
             <button
               type="button"
               onClick={onBackToGame}
-              className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer text-xs sm:text-sm font-bold bg-gradient-to-r from-emerald-400 to-emerald-500 text-neutral-950 hover:brightness-105"
+              className="flex-1 sm:flex-initial px-5 py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer text-xs sm:text-sm font-bold bg-linear-to-r from-emerald-400 to-emerald-500 text-neutral-950 hover:brightness-105"
             >
               <Zap className="w-4 h-4 fill-current" />
               <span>Test Your Reflexes Now</span>

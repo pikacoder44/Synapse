@@ -282,10 +282,10 @@ export function ScaleGuessLeaderboardPage({
       token ? getMyScores(token) : Promise.resolve(null),
     ]);
 
-    if (leaderboardRes.status === "fulfilled" && leaderboardRes.value.leaderboard.length > 0) {
+    if (leaderboardRes.status === "fulfilled" && leaderboardRes.value.leaderboard) {
       setEntries(leaderboardRes.value.leaderboard);
     } else {
-      setEntries(FALLBACK_CHAMPIONS);
+      setEntries([]);
     }
 
     if (statsRes.status === "fulfilled" && statsRes.value) {
@@ -326,13 +326,10 @@ export function ScaleGuessLeaderboardPage({
   };
 
   const sortedAllEntries = (() => {
-    const existingUsernames = new Set(entries.map((e) => e.username.toLowerCase()));
-    const fillers = FALLBACK_CHAMPIONS.filter(
-      (c) => !existingUsernames.has(c.username.toLowerCase())
-    );
-    const neededFillers = Math.max(0, 10 - entries.length);
-    const allEntries = [...entries, ...fillers.slice(0, neededFillers)];
-    return sortLeaderboardEntries(allEntries);
+    if (entries.length === 0) {
+      return sortLeaderboardEntries(FALLBACK_CHAMPIONS);
+    }
+    return sortLeaderboardEntries(entries);
   })();
 
   const top10Scale = sortedAllEntries.slice(0, 10);

@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { ArrowLeft, Trophy } from "lucide-react";
 import { NotColorBlindGame } from "./NotColorBlindGame";
-import { NotColorBlindLeaderboardModal } from "./NotColorBlindLeaderboardModal";
 import {
   getNotColorBlindPersonalBest,
   type NotColorBlindScoreRecord,
@@ -13,7 +12,6 @@ export interface NotColorBlindPageProps {
 }
 
 export function NotColorBlindPage({ onBackToHome, onNavigateLeaderboard }: NotColorBlindPageProps) {
-  const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [personalBest, setPersonalBest] = useState<number>(() => getNotColorBlindPersonalBest());
 
   const handleScoreSubmitted = useCallback((record: NotColorBlindScoreRecord) => {
@@ -23,8 +21,6 @@ export function NotColorBlindPage({ onBackToHome, onNavigateLeaderboard }: NotCo
   const handleOpenLeaderboard = useCallback(() => {
     if (onNavigateLeaderboard) {
       onNavigateLeaderboard();
-    } else {
-      setShowLeaderboard(true);
     }
   }, [onNavigateLeaderboard]);
 
@@ -78,11 +74,6 @@ export function NotColorBlindPage({ onBackToHome, onNavigateLeaderboard }: NotCo
           onBackToHome={onBackToHome}
         />
       </div>
-
-      {/* Leaderboard Modal */}
-      {showLeaderboard && (
-        <NotColorBlindLeaderboardModal onClose={() => setShowLeaderboard(false)} />
-      )}
     </main>
   );
 }

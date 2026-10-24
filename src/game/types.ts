@@ -43,4 +43,5 @@ export type RoundRecord = {
   actualMeasurement: number;
   errorPercent: number;
   score: number;
+  elapsedMs?: number;
 };

@@ -166,7 +166,7 @@ export function LauncherCatalog({
                   alt={game.title}
                   className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-neutral-950 via-transparent to-transparent" />
 
                 {/* Hover Play Button Overlay */}
                 <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 z-20">

@@ -57,6 +57,10 @@ export type GameState = {
   totalScore: number;
   /** Overall average error across completed rounds. */
   averageError: number;
+  /** Per-round elapsed time in milliseconds. */
+  roundElapsedMs: number[];
+  /** Total elapsed time across all completed rounds in milliseconds. */
+  totalElapsedMs: number;
 };
 type Action =
   | { type: "init"; puzzle: Puzzle | Puzzle[]; viewport: Viewport }
@@ -65,7 +69,7 @@ type Action =
   | { type: "resizeTarget"; scale: number }
   | { type: "zoom"; factor: number }
   | { type: "fit" }
-  | { type: "lockIn" }
+  | { type: "lockIn"; elapsedMs?: number }
   | { type: "nextRound"; puzzle?: Puzzle }
   | { type: "restart"; puzzle?: Puzzle | Puzzle[] }
   | { type: "setCamera"; camera: Camera };
@@ -189,8 +193,10 @@ function createInitialState(
     roundScores: [],
     roundErrors: [],
     rounds: [],
+    roundElapsedMs: [],
     totalScore: 0,
     averageError: 0,
+    totalElapsedMs: 0,
   };
 
   return {
@@ -310,6 +316,7 @@ function reducer(state: GameState | null, action: Action): GameState | null {
       const actual = state.puzzle.target.actualMeasurement;
       const score = calculateScore(guess, actual);
       const errorPercent = Math.abs(percentError(guess, actual));
+      const elapsedMs = action.elapsedMs ?? 0;
 
       const roundRecord: RoundRecord = {
         round: state.currentRound,
@@ -318,14 +325,17 @@ function reducer(state: GameState | null, action: Action): GameState | null {
         actualMeasurement: actual,
         errorPercent,
         score,
+        elapsedMs,
       };
 
       const nextRoundScores = [...state.roundScores, score];
       const nextRoundErrors = [...state.roundErrors, errorPercent];
       const nextRounds = [...state.rounds, roundRecord];
+      const nextRoundElapsed = [...state.roundElapsedMs, elapsedMs];
       const nextTotalScore = nextRoundScores.reduce((sum, s) => sum + s, 0);
       const nextAverageError =
         nextRoundErrors.reduce((sum, e) => sum + e, 0) / nextRoundErrors.length;
+      const nextTotalElapsedMs = nextRoundElapsed.reduce((sum, t) => sum + t, 0);
       const isFinished = state.currentRound >= state.totalRounds;
 
       const lockedBase: GameState = {
@@ -335,8 +345,10 @@ function reducer(state: GameState | null, action: Action): GameState | null {
         roundScores: nextRoundScores,
         roundErrors: nextRoundErrors,
         rounds: nextRounds,
+        roundElapsedMs: nextRoundElapsed,
         totalScore: nextTotalScore,
         averageError: nextAverageError,
+        totalElapsedMs: nextTotalElapsedMs,
       };
 
       // Auto-fit BOTH silhouettes (reference + target guess & actual) inside the canvas with 10% padding margin
@@ -429,6 +441,7 @@ function reducer(state: GameState | null, action: Action): GameState | null {
 export function useGame() {
   const [state, dispatch] = useReducer(reducer, null);
   const animRef = useRef<number | null>(null);
+  const roundStartTimeRef = useRef<number>(performance.now());
 
   // Smoothly interpolates the camera over a given duration
   const animateCameraTo = (targetCamera: Camera, duration = 300) => {
@@ -493,7 +506,8 @@ export function useGame() {
   const lockIn = () => {
     if (!state || state.phase !== "PLAYING") return;
     if (animRef.current) cancelAnimationFrame(animRef.current);
-    dispatch({ type: "lockIn" });
+    const elapsed = Math.max(10, Math.round(performance.now() - roundStartTimeRef.current));
+    dispatch({ type: "lockIn", elapsedMs: elapsed });
   };
 
   useEffect(() => {
@@ -517,8 +531,10 @@ export function useGame() {
       state && fitBaseZoom
         ? Math.round((state.camera.zoom / fitBaseZoom) * 100)
         : 0,
-    init: (puzzle: Puzzle | Puzzle[], viewport: Viewport) =>
-      dispatch({ type: "init", puzzle, viewport }),
+    init: (puzzle: Puzzle | Puzzle[], viewport: Viewport) => {
+      roundStartTimeRef.current = performance.now();
+      dispatch({ type: "init", puzzle, viewport });
+    },
     setViewport: (viewport: Viewport) =>
       dispatch({ type: "viewport", viewport }),
     moveTarget: (center: Vec) => dispatch({ type: "moveTarget", center }),
@@ -530,6 +546,7 @@ export function useGame() {
     nextRound: (puzzle?: unknown) => {
       if (!state) return;
       if (animRef.current) cancelAnimationFrame(animRef.current);
+      roundStartTimeRef.current = performance.now();
       const isParamPuzzleValid =
         puzzle &&
         typeof puzzle === "object" &&
@@ -543,6 +560,7 @@ export function useGame() {
     restartGame: (puzzle?: unknown) => {
       if (!state) return;
       if (animRef.current) cancelAnimationFrame(animRef.current);
+      roundStartTimeRef.current = performance.now();
       if (Array.isArray(puzzle) && puzzle.length > 0) {
         dispatch({ type: "restart", puzzle: puzzle as Puzzle[] });
         return;

@@ -910,6 +910,28 @@ export async function initDb(): Promise<void> {
       ON not_color_blind_scores (user_id);
   `);
 
+  // 6. Human Benchmark reaction scores (5-round reaction speed test)
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS human_benchmark_scores (
+      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+      user_id TEXT,
+      player_name TEXT NOT NULL DEFAULT 'Anonymous',
+      average_reaction_ms INT NOT NULL,
+      rounds JSONB NOT NULL DEFAULT '[]'::jsonb,
+      created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
+    );
+  `);
+
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS idx_hb_scores_leaderboard 
+      ON human_benchmark_scores (average_reaction_ms ASC, created_at ASC);
+  `);
+
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS idx_hb_scores_user 
+      ON human_benchmark_scores (user_id);
+  `);
+
   // 6. Seed initial puzzle items and pairings if table is empty
   try {
     const { rows: existingRows } = await pool.query('SELECT count(*)::int as count FROM puzzle_items');
@@ -1055,11 +1077,10 @@ const memoryNotColorBlindScores: NotColorBlindScoreRecord[] = [
 export async function saveNotColorBlindScore(
   scoreData: SaveNotColorBlindScoreInput
 ): Promise<NotColorBlindScoreRecord> {
-  const isUuid = Boolean(
-    scoreData.userId &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(scoreData.userId)
-  );
-  const userId = isUuid ? scoreData.userId! : null;
+  const userId =
+    scoreData.userId && String(scoreData.userId).trim().length > 0
+      ? String(scoreData.userId).trim()
+      : null;
   const playerName = scoreData.playerName?.trim() || 'Anonymous';
   const timeTaken = Number(Number(scoreData.timeTakenSeconds).toFixed(2));
   const score = Math.round(scoreData.score);
@@ -1317,11 +1338,10 @@ const memoryHumanBenchmarkScores: HumanBenchmarkScoreRecord[] = [
 export async function saveHumanBenchmarkScore(
   scoreData: SaveHumanBenchmarkScoreInput
 ): Promise<HumanBenchmarkScoreRecord> {
-  const isUuid = Boolean(
-    scoreData.userId &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(scoreData.userId)
-  );
-  const userId = isUuid ? scoreData.userId! : null;
+  const userId =
+    scoreData.userId && String(scoreData.userId).trim().length > 0
+      ? String(scoreData.userId).trim()
+      : null;
   const playerName = scoreData.playerName?.trim() || 'Anonymous';
   const averageMs = Math.round(scoreData.averageReactionMs);
   const rounds = Array.isArray(scoreData.rounds) ? scoreData.rounds.map((r) => Math.round(r)) : [];

@@ -38,7 +38,7 @@ export function LauncherHero({
         </AnimatePresence>
 
         {/* ── Dark bottom radial gradient fade (per prompt spec) ── */}
-        <div className="absolute inset-0 bg-gradient-to-t from-neutral-950 via-neutral-950/40 to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-neutral-950 via-neutral-950/40 to-transparent" />
 
         {/* ── Additional radial vignette to ground text and cards ── */}
         <div
@@ -48,7 +48,7 @@ export function LauncherHero({
               "radial-gradient(circle at 75% 75%, transparent 20%, rgba(10, 10, 10, 0.4) 60%, rgba(10, 10, 10, 0.85) 100%)",
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-neutral-950/70 via-transparent to-neutral-950/30" />
+        <div className="absolute inset-0 bg-linear-to-r from-neutral-950/70 via-transparent to-neutral-950/30" />
       </div>
 
       {/* ── 2. Top-Left Brand Header: Synapse ── */}

@@ -64,34 +64,11 @@ export function ResultPanel({
   const [saved, setSaved] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Track when each round started so we can compute per-round elapsedMs.
-  // We record the timestamp when the phase transitions into a new PLAYING round.
-  const roundStartTimeRef = useRef<number | null>(null);
-  const lastRoundCountRef = useRef<number>(state.rounds.length);
-  const roundElapsedMsRef = useRef<number[]>([]);
-
   const isFinalRound = state.phase === "FINISHED";
   const currentRoundScore =
     state.roundScores[state.roundScores.length - 1] ?? 0;
   const currentRoundError =
     state.roundErrors[state.roundErrors.length - 1] ?? 0;
-
-  // When a round is completed (rounds array grows), record its elapsed time.
-  useEffect(() => {
-    if (roundStartTimeRef.current === null) {
-      roundStartTimeRef.current = performance.now();
-    }
-    const prev = lastRoundCountRef.current;
-    const curr = state.rounds.length;
-    if (curr > prev) {
-      const startTime = roundStartTimeRef.current;
-      const elapsed = Math.round(performance.now() - startTime);
-      roundElapsedMsRef.current = [...roundElapsedMsRef.current, elapsed];
-      lastRoundCountRef.current = curr;
-      // Reset timer for next round
-      roundStartTimeRef.current = performance.now();
-    }
-  }, [state.rounds.length]);
 
   const guess = state.finalGuessScale ?? state.guessScale;
   const correct = state.puzzle.target.actualMeasurement;
@@ -116,7 +93,7 @@ export function ResultPanel({
       // Required fields for server-side score recalculation
       guess: r.guessScale,
       correct: r.actualMeasurement,
-      elapsedMs: roundElapsedMsRef.current[i] ?? 0,
+      elapsedMs: r.elapsedMs ?? state.roundElapsedMs?.[i] ?? 0,
       // Metadata carried through for storage / future analytics
       round: r.round,
       puzzleId: r.puzzle.id,
@@ -136,7 +113,7 @@ export function ResultPanel({
       .finally(() => {
         setIsSubmitting(false);
       });
-  }, [token, isAuthenticated, isFinalRound, state.rounds]);
+  }, [token, isAuthenticated, isFinalRound, state.rounds, state.roundElapsedMs]);
 
   // Focus progression button without scrolling the page
   useEffect(() => {
