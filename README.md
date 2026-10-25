@@ -1,64 +1,120 @@
-# ScaleGuess
+# 🧠 Synapse — Multi-game platform to train and benchmark your cognitive skills
 
-ScaleGuess is a fast, minimalist browser game about visual proportion. Resize an original SVG silhouette until it feels right beside a known reference object, then lock in your estimate and see how close you were.
+> **Live Application:** [synapse.vercel.app](https://synapse.vercel.app)  
+> **Developer:** Syed Muhammad Hashir Ali ([hashir.dev](https://hashir.dev))
 
-## Stack
+Synapse is a high-precision, web-based cognitive training suite designed to measure, train, and benchmark fundamental spatial perception, color discrimination, and visual reaction speed. Built with a dark glassmorphic design system, Synapse provides instant performance feedback and global leaderboard tracking across three core cognitive modules.
 
-- React 19 + TypeScript
-- Vite
-- Tailwind CSS v4 via `@tailwindcss/vite`
-- Motion for lightweight page and result transitions
-- SVG silhouettes and static TypeScript puzzle data
-- `localStorage` for statistics and completed daily results
+---
 
-## Run locally
+## 🎮 Cognitive Modules
 
+### 1. 📏 ScaleGuess (Spatial & Dimensional Estimation)
+- **Concept:** Estimate the real-world scale of objects across multi-order logarithmic dimensions—from sub-micron molecular structures ($\text{nm}/\mu\text{m}$) to planetary scales ($\text{km}$).
+- **Engine:** SVG vector rendering with unpadded scale transformations to ensure 100% geometric accuracy.
+- **Scoring:** Precision-based scoring curve using logarithmic deviation from real-world metric attributes.
+
+### 2. 🎨 Not Color Blind (HSB Color Memory & Discrimination)
+- **Concept:** Train fine-grained color perception and working visual memory under strict time constraints.
+- **Engine:** Dynamic HSB (Hue, Saturation, Brightness) color manipulation algorithms.
+- **Gameplay:** Memorize a target swatch within 5 seconds, then reconstruct the exact shade using 3-axis interactive sliders.
+
+### 3. ⚡ Human Benchmark (Visual Reflex Speed)
+- **Concept:** Benchmark millisecond-level neural reaction latency.
+- **Engine:** High-frequency event loop tracking with anti-anticipation logic (false start detection).
+- **Analytics:** 5-round average reaction time tracking ($\text{ms}$) with latency distribution breakdowns.
+
+---
+
+## 🛠️ Tech Stack & Architecture
+
+Synapse is engineered as a Vercel Multi-Service project, separating client-side rendering from serverless REST API microservices:
+
+### **Frontend**
+- **Framework:** React 19 + Vite
+- **Styling:** Tailwind CSS v4 (Glassmorphism, custom design tokens, dark theme)
+- **Icons:** Lucide React
+- **Type Safety:** TypeScript (Strict mode)
+
+### **Backend & Database**
+- **Runtime:** Node.js + Express.js
+- **Database:** PostgreSQL (Supabase) with zero-config in-memory fallback for local development
+- **Authentication:** JWT (JSON Web Tokens) with Google & GitHub OAuth integration
+- **Deployment:** Vercel Multi-Service (`vercel.json` routing architecture)
+
+---
+
+## 🚀 Getting Started Locally
+
+### Prerequisites
+- Node.js (v18 or higher)
+- npm or pnpm
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/pikacoder44/Synapse.git
+cd Synapse
+```
+
+### 2. Install Dependencies
+Install root and server dependencies:
 ```bash
 npm install
+npm install --prefix server
+```
+
+### 3. Set Up Environment Variables
+Create a `.env` file in the root directory for the client:
+```env
+VITE_SUPABASE_URL=https://your-supabase-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
+VITE_API_BASE_URL=http://localhost:3001
+```
+
+Create a `server/.env` file for the backend server:
+```env
+PORT=3001
+DATABASE_URL=postgresql://postgres:password@localhost:5432/postgres
+JWT_SECRET=your-32-byte-random-jwt-secret
+JWT_EXPIRES_IN=7d
+CORS_ORIGIN=http://localhost:5173
+```
+
+### 4. Run Development Servers
+Start the backend server and Vite frontend concurrently:
+```bash
+# Terminal 1: Start Express API Server
+npm run dev --prefix server
+
+# Terminal 2: Start Vite Client
 npm run dev
 ```
 
-Production builds use:
+Open `http://localhost:5173` in your browser.
 
+---
+
+## 📊 Quality Assurance & Verification
+The codebase strictly enforces 0 lint, type, or runtime warnings:
 ```bash
-npm run build
-npm run preview
+# Run client and server linter + typechecks
+npm run lint && npx tsc -b && npx tsc --noEmit --project server/tsconfig.json
+
+# Test production builds
+npm run build && npm run build --prefix server
 ```
 
-## Game mechanics
+---
 
-Each game contains five puzzles. The reference is fixed at 1.75 m and the player sizes a target object with a range slider, touch input, pointer input, or left/right arrow keys. Locking in reveals the estimate, actual dimension, relative error, and round score.
+## 👨‍💻 Author
+**Syed Muhammad Hashir Ali**  
+Backend & Full-Stack Software Engineer  
+- **Portfolio:** [hashir.dev](https://hashir.dev)  
+- **GitHub:** [@pikacoder44](https://github.com/pikacoder44)  
+- **LinkedIn:** [syedmhashirali](https://www.linkedin.com/in/syedmhashirali/)  
+- **Email:** hashiralibusiness@gmail.com  
 
-Relative error is:
+---
 
-`abs(estimate - actual) / actual`
-
-The score is deterministic and intentionally forgiving near the answer:
-
-`round(100 * exp(-4.2 * relativeError))`, clamped to 0-100.
-
-## Daily puzzles
-
-The daily set is created from a UTC date string with a small seeded linear-congruential random generator. The same date therefore produces the same five target objects for every player, without a backend. Completed daily results are stored under a date-specific localStorage key so refreshes do not discard them.
-
-Practice sets use the same selection code with a random seed and do not affect the daily streak.
-
-## Architecture
-
-- `src/App.tsx`: route-aware screen flow and interaction orchestration
-- `src/components/ObjectSilhouette.tsx`: original SVG silhouette renderer
-- `src/data/objects.ts`: typed object catalog with 30 objects
-- `src/game.ts`: puzzle selection, formatting, scoring, and statistics logic
-- `src/storage.ts`: localStorage persistence
-- `src/share.ts`: Web Share API with clipboard fallback
-- `src/types.ts`: shared game and storage contracts
-
-The app uses lightweight history-based client-side routing for `/`, `/daily`, `/practice`, `/how-to-play`, and `/results`. Vite's SPA fallback keeps direct route refreshes working in development and preview deployments that serve `index.html` for unknown paths.
-
-## Performance and accessibility
-
-The silhouette is an inline SVG and the board changes the target height with CSS rather than rendering a large bitmap. The interaction value is kept in a ref-backed update path, while the current measurement is rendered for accessibility and clarity. Buttons and the slider have visible focus states, the resize action works from the keyboard and touch, and reduced-motion preferences shorten transitions.
-
-## Add an object
-
-Add a `ScaleObject` entry to `src/data/objects.ts`. Choose a unique `id`, a sensible real-world `dimension` and `unit`, a `dimensionType`, and one of the silhouette keys supported by `ObjectSilhouette.tsx`. Add a new SVG branch there when a new shape is needed. Daily and practice selection will include it automatically.
+## 📄 License
+This project is licensed under the [MIT License](LICENSE).
