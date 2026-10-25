@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL || "";
+import { API_BASE } from "./apiConfig";
 const STORAGE_LOCAL_SCORES_KEY = "human_benchmark_local_scores";
 const STORAGE_PENDING_SCORES_KEY = "human_benchmark_pending_scores";
 const STORAGE_BEST_SCORE_KEY = "human_benchmark_best_score";

@@ -2,7 +2,7 @@ import type { Puzzle } from "@/game/types";
 import type { PuzzleItem, ItemCategory } from "@/types/puzzle";
 import { generateGameSession, PUZZLES } from "@/game/puzzles";
 
-const API_BASE = import.meta.env.VITE_API_URL || "";
+import { API_BASE } from "./apiConfig";
 
 /**
  * Fetch a 5-round puzzle session from the server/database.

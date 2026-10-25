@@ -1,6 +1,6 @@
 import type { AuthResponse, GoogleAuthPayload, GitHubAuthPayload, LoginPayload, RegisterPayload, User } from "../types/auth";
 
-const API_BASE = import.meta.env.VITE_API_URL || "";
+import { API_BASE } from "./apiConfig";
 
 export class AuthApiError extends Error {
   status: number;

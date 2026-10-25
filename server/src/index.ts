@@ -22,9 +22,28 @@ const PORT = Number(process.env.PORT ?? 3001);
 // Middleware
 // ---------------------------------------------------------------------------
 
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(',').map((o) => o.trim())
+  : ['http://localhost:5173', 'http://127.0.0.1:5173'];
+
 app.use(cors({
-  // In dev allow the Vite dev server; tighten in production
-  origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Requests with no origin (e.g., same-origin, curl, server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    // Allow Vercel deployment preview / production domains and local development
+    if (
+      origin.includes('localhost') ||
+      origin.includes('127.0.0.1') ||
+      origin.endsWith('.vercel.app') ||
+      process.env.NODE_ENV !== 'production'
+    ) {
+      return callback(null, true);
+    }
+    return callback(null, false);
+  },
   credentials: true,
 }));
 
@@ -35,16 +54,10 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(optionalAuth);
 
 // ---------------------------------------------------------------------------
-// Routes
+// Health check and root inspection
 // ---------------------------------------------------------------------------
 
-app.use('/api/auth', authRouter);
-app.use('/api/scores', scoresRouter);
-app.use('/api/not-color-blind', notColorBlindRouter);
-app.use('/api/puzzles', puzzlesRouter);
-
-// Health check with PostgreSQL / Supabase connection inspection
-app.get('/api/health', async (_req: Request, res: Response) => {
+const healthCheckHandler = async (_req: Request, res: Response) => {
   const dbHealth = await checkDbHealth();
   const statusCode = dbHealth.ok ? 200 : 503;
 
@@ -58,7 +71,31 @@ app.get('/api/health', async (_req: Request, res: Response) => {
     },
     timestamp: new Date().toISOString(),
   });
+};
+
+// Health check mounted on both /api/health and /health for container/Vercel probes
+app.get(['/api/health', '/health'], healthCheckHandler);
+
+// Top-level status endpoint
+app.get(['/api', '/'], (_req: Request, res: Response) => {
+  res.json({ status: 'ok', service: 'synapse-api' });
 });
+
+// ---------------------------------------------------------------------------
+// Routes
+// ---------------------------------------------------------------------------
+
+// Primary /api routing (used by client and Vercel /api/(.*) rewrites)
+app.use('/api/auth', authRouter);
+app.use('/api/scores', scoresRouter);
+app.use('/api/not-color-blind', notColorBlindRouter);
+app.use('/api/puzzles', puzzlesRouter);
+
+// Fallback routing in case incoming requests arrive with /api prefix stripped
+app.use('/auth', authRouter);
+app.use('/scores', scoresRouter);
+app.use('/not-color-blind', notColorBlindRouter);
+app.use('/puzzles', puzzlesRouter);
 
 // ---------------------------------------------------------------------------
 // 404 catch-all

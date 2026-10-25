@@ -1,6 +1,6 @@
 import type { ColorHSB } from "@/games/not-color-blind/types";
 
-const API_BASE = import.meta.env.VITE_API_URL || "";
+import { API_BASE } from "./apiConfig";
 const STORAGE_LOCAL_SCORES_KEY = "not_color_blind_local_scores";
 const STORAGE_PENDING_SCORES_KEY = "not_color_blind_pending_scores";
 const STORAGE_BEST_SCORE_KEY = "not_color_blind_best_score";
