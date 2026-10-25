@@ -10,7 +10,7 @@ import { NotColorBlindLeaderboardPage } from "@/games/not-color-blind/NotColorBl
 import { HumanBenchmarkPage } from "@/games/human-benchmark/HumanBenchmarkPage";
 import { HumanBenchmarkLeaderboardPage } from "@/games/human-benchmark/HumanBenchmarkLeaderboardPage";
 import { ProfilePage } from "@/pages/ProfilePage";
-import { Footer } from "@/components/home/Footer";
+import { Footer } from "@/components/layout/Footer";
 import { PublicProfilePage } from "@/pages/PublicProfilePage";
 import { SmoothScrollProvider } from "@/components/providers/SmoothScrollProvider";
 import { AnimatePresence } from "motion/react";
@@ -424,8 +424,8 @@ export function App() {
         </PageWrapper>
       </AnimatePresence>
 
-      {/* ── Footer (shown on subpages; HomePage renders custom launcher footer) ── */}
-      {currentRoute !== "home" && <Footer onNavigate={navigateTo} />}
+      {/* ── Global Glassmorphic Footer ── */}
+      <Footer isHomePage={currentRoute === "home"} onNavigate={navigateTo} />
 
       {/* ── In-App Auth Modal ── */}
       <AuthModal />

@@ -114,31 +114,6 @@ export function HomePage({
           onSearchChange={setLocalSearchQuery}
         />
 
-        {/* ── Sleek Minimalist Launcher Footer ── */}
-        <footer className="w-full max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 py-8 border-t border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-neutral-400">
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-white font-sans">Synapse Arcade</span>
-            <span>•</span>
-            <span>Calibrated Cognitive Training Platform</span>
-          </div>
-          <div className="flex items-center gap-4 text-neutral-400">
-            <button
-              type="button"
-              onClick={() => handleCardNavigate("/games/scale-guess/leaderboard")}
-              className="hover:text-white transition-colors cursor-pointer"
-            >
-              Leaderboards
-            </button>
-            <span>•</span>
-            <button
-              type="button"
-              onClick={handleProfileClick}
-              className="hover:text-white transition-colors cursor-pointer"
-            >
-              My Profile
-            </button>
-          </div>
-        </footer>
       </main>
     </div>
   );
