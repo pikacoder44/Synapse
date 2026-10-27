@@ -1,7 +1,7 @@
 # 🧠 Synapse — Multi-game platform to train and benchmark your cognitive skills
 
 > **Live Application:** [synapse.vercel.app](https://synapse.vercel.app)  
-> **Developer:** Syed Muhammad Hashir Ali ([hashir.dev](https://hashir.dev))
+> **Developer:** Syed Muhammad Hashir Ali ([hashir.dev](https://hashir-dev-delta.vercel.app/))
 
 Synapse is a high-precision, web-based cognitive training suite designed to measure, train, and benchmark fundamental spatial perception, color discrimination, and visual reaction speed. Built with a dark glassmorphic design system, Synapse provides instant performance feedback and global leaderboard tracking across three core cognitive modules.
 
@@ -109,7 +109,7 @@ npm run build && npm run build --prefix server
 ## 👨‍💻 Author
 **Syed Muhammad Hashir Ali**  
 Backend & Full-Stack Software Engineer  
-- **Portfolio:** [hashir.dev](https://hashir.dev)  
+- **Portfolio:** [hashir.dev](https://hashir-dev-delta.vercel.app/)  
 - **GitHub:** [@pikacoder44](https://github.com/pikacoder44)  
 - **LinkedIn:** [syedmhashirali](https://www.linkedin.com/in/syedmhashirali/)  
 - **Email:** hashiralibusiness@gmail.com  
